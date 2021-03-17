@@ -1,0 +1,81 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CharacterCont : MonoBehaviour
+{
+    public SpriteRenderer spr;
+    public Animator anim;
+    public float speed;
+    public float height;
+    Rigidbody2D rigi;
+
+    bool canJump = true;
+    float twojump = 2;
+
+    private void Start()
+    {
+        rigi = GetComponent<Rigidbody2D>();
+        Cursor.visible = false;
+    }
+
+
+    private void Update()
+    {
+    }
+
+    void FixedUpdate()
+    {
+        Move();
+    }
+
+    void Move()
+    {
+        float h = Input.GetAxis("Horizontal");
+        float horizontal = speed * h * Time.deltaTime;
+
+        rigi.velocity = new Vector2(horizontal, rigi.velocity.y);
+
+        if(Input.GetKey(KeyCode.A))
+        {
+            spr.flipX = true;
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            spr.flipX = false;
+        }
+
+        if (twojump > 0 || canJump)
+        {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                rigi.velocity = Vector2.up * height * Time.deltaTime;
+                canJump = false;
+                twojump = twojump - 1;
+                anim.SetBool("jump", true);
+            }
+
+            if (Input.GetKeyDown(KeyCode.W))
+            {
+                rigi.velocity = Vector2.up * height * Time.deltaTime;
+                canJump = false;
+                twojump = twojump - 1;
+                anim.SetBool("jump", true);
+            }
+        }
+
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Place")
+        {
+            twojump = 2;
+            canJump = true;
+            anim.SetBool("jump", false);
+        }
+    }
+
+} 
