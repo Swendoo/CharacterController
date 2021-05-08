@@ -52,7 +52,7 @@ public class CharacterCont : MonoBehaviour
             {
                 rigi.velocity = Vector2.up * height * Time.deltaTime;
                 canJump = false;
-                twojump = twojump - 1;
+                twojump -= 1;
                 anim.SetBool("jump", true);
             }
 
@@ -60,7 +60,7 @@ public class CharacterCont : MonoBehaviour
             {
                 rigi.velocity = Vector2.up * height * Time.deltaTime;
                 canJump = false;
-                twojump = twojump - 1;
+                twojump -= 1;
                 anim.SetBool("jump", true);
             }
         }
