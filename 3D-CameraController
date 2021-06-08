@@ -1,0 +1,29 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CameraController : MonoBehaviour
+{
+    private float yRotation = 0;
+    public float mouseSens = 100f;
+    [SerializeField] private GameObject player;
+
+
+    private void Start() 
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+    
+    void Update()
+    {
+        float mouseX = Input.GetAxis("Mouse X") * Time.deltaTime * mouseSens;
+        float mouseY = Input.GetAxis("Mouse Y") * Time.deltaTime * mouseSens;
+
+        yRotation -= mouseY;
+        yRotation = Mathf.Clamp(yRotation, -90f, 90f);
+        Mathf.Clamp(50, 40, 60);
+
+        transform.localRotation = Quaternion.Euler(yRotation, 0 , 0);
+        player.transform.Rotate(Vector3.up * mouseX);
+    }
+}
