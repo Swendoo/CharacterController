@@ -1,0 +1,16 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerCode : MonoBehaviour
+{
+    public float speed;
+
+    void Update()
+    {
+        Vector3 playerInput = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector3 moveVelocity = playerInput * speed * Time.deltaTime;
+
+        transform.Translate(moveVelocity);
+    }
+}
