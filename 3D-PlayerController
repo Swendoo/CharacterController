@@ -1,0 +1,122 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+
+    // Ground Checker Y -1.3
+    // Character Controller Height 2.75
+
+    public GameObject inv;
+    // Movement
+    private CharacterController controller;
+    private bool isRun;
+    public float speed; // Default 4
+    public float fastSpeed; // Default 6
+    private float currentSpeed;
+
+    // Camera Controller
+    private float xRotation = 0f;
+    public float mouseSensivity = 100f;
+
+    // Jump and Gravity
+    private Vector3 velocity;
+    private float gravity = -9.81f;
+    private bool isGrounded;
+
+    public Transform groundChecker;
+    public float groundCheckerRadius; // Default 0.25
+    public LayerMask obstacleLayer;
+
+    public float heightPower; // Default 0.05
+    public float height; // Default 20
+    public float jumpSpeed; // Default 7
+    public float jumpfastSpeed; // Default 8
+
+    private void Start() {
+        controller = GetComponent<CharacterController>();
+
+        currentSpeed = speed;
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private void Update() {
+        #region
+        isGrounded = Physics.CheckSphere(groundChecker.position, groundCheckerRadius, obstacleLayer);
+        isRun = Input.GetKey(KeyCode.LeftShift);
+        #endregion
+
+        #region Movement
+        Vector3 moveInputs = Input.GetAxis("Horizontal") * transform.right + Input.GetAxis("Vertical") * transform.forward;
+        Vector3 moveVelocity = moveInputs * Time.deltaTime * speed;
+
+        controller.Move(moveVelocity);
+
+        if (isRun)
+        {
+            speed = fastSpeed;
+        }
+        #endregion
+
+        #region Camera Controller
+        transform.Rotate(0, Input.GetAxis("Mouse X") * Time.deltaTime * mouseSensivity, 0);
+
+        xRotation -= Input.GetAxis("Mouse Y") * Time.deltaTime * mouseSensivity;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+        Camera.main.transform.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        #endregion
+
+        #region Jump and Gravity
+        
+
+        if (!isGrounded)
+        {
+            velocity.y += gravity * Time.deltaTime / height;
+            if (isRun)
+            {
+                speed = jumpfastSpeed;
+            }
+            else
+            {
+                speed = jumpSpeed;
+            } 
+        }
+        else
+        {
+            velocity.y = -0.05f;
+            if (isRun)
+            {
+                speed = fastSpeed;
+            }
+            else
+            {
+                speed = currentSpeed;
+            }
+            
+        }
+
+        if(Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(heightPower * -2 * gravity * Time.deltaTime);
+        }
+        
+        controller.Move(velocity);
+        #endregion
+
+        #region Keys
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            if(inv.activeSelf == false)
+            {
+                inv.SetActive(true);
+            }
+            else if(inv.activeSelf == true)
+            {
+                inv.SetActive(false);
+            }    
+        }
+        #endregion
+    }
+}
