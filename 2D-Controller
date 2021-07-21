@@ -2,26 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterCont : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
-    public SpriteRenderer spr;
-    public Animator anim;
-    public float speed;
-    public float height;
+    private SpriteRenderer spr;
+    private Animator anim;
+    public float speed = 500, height = 350, jumpForce = 7;
     Rigidbody2D rigi;
-
-    bool canJump = true;
-    float twojump = 2;
 
     private void Start()
     {
+        anim = GetComponent<Animator>();
         rigi = GetComponent<Rigidbody2D>();
-        Cursor.visible = false;
+        spr = GetComponent<SpriteRenderer>();
     }
-
 
     private void Update()
     {
+        Jump();
     }
 
     void FixedUpdate()
@@ -36,7 +33,7 @@ public class CharacterCont : MonoBehaviour
 
         rigi.velocity = new Vector2(horizontal, rigi.velocity.y);
 
-        if(Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A))
         {
             spr.flipX = true;
         }
@@ -45,37 +42,15 @@ public class CharacterCont : MonoBehaviour
         {
             spr.flipX = false;
         }
-
-        if (twojump > 0 || canJump)
-        {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                rigi.velocity = Vector2.up * height * Time.deltaTime;
-                canJump = false;
-                twojump -= 1;
-                anim.SetBool("jump", true);
-            }
-
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                rigi.velocity = Vector2.up * height * Time.deltaTime;
-                canJump = false;
-                twojump -= 1;
-                anim.SetBool("jump", true);
-            }
-        }
-
-
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void Jump()
     {
-        if(collision.gameObject.tag == "Place")
+        if (Input.GetButtonDown("Jump") && Mathf.Abs(rigi.velocity.y) < 0.001f)
         {
-            twojump = 2;
-            canJump = true;
-            anim.SetBool("jump", false);
+            rigi.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
         }
     }
 
-} 
+
+}
